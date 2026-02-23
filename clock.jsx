@@ -8,10 +8,10 @@ export const className =`
     src: url('Doto-Medium.ttf') format('truetype'); 
   }
   
-  top: 15%;
-  left: 52%; 
-  transform: translateX(-50%);
-  text-align: center;
+    top: 15%;
+    left: 52%; 
+    transform: translateX(-50%);
+    text-align: center;
   
   color: #f7f3e8;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -19,7 +19,7 @@ export const className =`
   
   .time {
     font-family: 'Doto', sans-serif;
-    font-size: 5vw; 
+    font-size: 130px; 
     letter-spacing: 0.1em;
     margin-bottom: 20px;
     font-weight: normal;
@@ -29,7 +29,7 @@ export const className =`
   
   .date {
     font-family: 'Doto';
-    font-size: 1.5vw;
+    font-size: 21px;
     font-weight: bold;
     letter-spacing: 0.2em;
     margin-bottom: 10px;
@@ -38,7 +38,7 @@ export const className =`
   }
 
   .seconds {
-    font-size: 2vw;
+    font-size: 40px;
     vertical-align: super;
     
     letter-spacing: 0.1em;
@@ -48,8 +48,8 @@ export const className =`
 
 export const render = ({ output }) => {
   const lines = output.split('\n');
-  const isLocked = lines[lines.length - 1].trim() === 'LOCKED';
-
+  
+  // const isLocked = lines[lines.length - 1].trim() === 'LOCKED';
   // if (!isLocked) return <div style={{display: 'none'}} />;
   
   const [day, dateString, time] = output.split('\n');
