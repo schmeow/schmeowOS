@@ -3,40 +3,40 @@ import { styled } from "uebersicht";
 
 export const refreshFrequency = 1000;
 export const command = `
-    imsg=\$(sqlite3 ~/Library/Messages/chat.db \
+  imsg=\$(sqlite3 ~/Library/Messages/chat.db \
     "SELECT COUNT(*) FROM message WHERE is_read=0 AND is_from_me=0;")
 
-    gmail=\$(osascript << 'EOF'
-    tell application "Mail"
-    set total to 0
-    repeat with a in every account
+  gmail=\$(osascript << 'EOF'
+tell application "Mail"
+  set total to 0
+  repeat with a in every account
     if name of a is "Google" then
-        repeat with mb in every mailbox of a
+      repeat with mb in every mailbox of a
         if name of mb is "INBOX" then
-            set total to total + (unread count of mb)
+          set total to total + (unread count of mb)
         end if
-        end repeat
+      end repeat
     end if
-    end repeat
-    return total
-    end tell
-    EOF)
+  end repeat
+  return total
+end tell
+EOF)
 
-    outlook=\$(osascript << 'EOF'
-    tell application "Mail"
-    repeat with a in every account
+  outlook=\$(osascript << 'EOF'
+tell application "Mail"
+  repeat with a in every account
     if name of a is "Exchange" then
-        repeat with mb in every mailbox of a
+      repeat with mb in every mailbox of a
         if name of mb is "Inbox" then
-            return unread count of mb
+          return unread count of mb
         end if
-        end repeat
+      end repeat
     end if
-    end repeat
-    end tell
-    EOF)
+  end repeat
+end tell
+EOF)
 
-    echo "\$imsg|\$gmail|\$outlook"
+  echo "\$imsg|\$gmail|\$outlook"
 `;
 
 export const className = `
@@ -80,39 +80,28 @@ const Label = styled("span")`
 
 const p = (n, singular, plural) => n === 1 ? singular : plural;
 
-const fakeData = [
-    { key: "messages", label: (im, dc) => `you have ${im + dc} new ${p(im + dc, "message", "messages")}`, imessage: 3, discord: 5 },
-    { key: "email",    label: (gm, ol) => `you have ${gm + ol} new ${p(gm + ol, "email", "emails")}`,     gmail: 0,   outlook: 0 },
-];
-
 export const render = ({ output }) => {
-    const parts = (output || "").trim().split("|");
-    const imessageCount = parseInt(parts[0]) || 0;
-    const gmailCount    = parseInt(parts[1]) || 0;
-    const outlookCount  = parseInt(parts[2]) || 0;
+  const parts = (output || "").trim().split("|");
+  const imessageCount = parseInt(parts[0]) || 0;
+  const gmailCount    = parseInt(parts[1]) || 0;
+  const outlookCount  = parseInt(parts[2]) || 0;
 
-    const data = [
-        { key: "messages", label: (im, dc) => `you have ${im + dc} new ${p(im + dc, "message", "messages")}`, imessage: imessageCount, discord: 0 },
-        { key: "email",    label: (gm, ol) => `you have ${gm + ol} new ${p(gm + ol, "email", "emails")}`,     gmail: gmailCount, outlook: outlookCount },
-    ];
+  const data = [
+    { key: "messages", label: (n) => `you have ${n} new ${p(n, "message", "messages")}`, count: imessageCount },
+    { key: "email",    label: (n) => `you have ${n} new ${p(n, "email", "emails")}`,     count: gmailCount + outlookCount },
+  ];
 
-    return (
+  return (
     <>
-        <Wrapper>
-        {data.map(({ key, label, imessage, discord, gmail, outlook }) => {
-            const count = key === "messages" ? imessage + discord : gmail + outlook;
-            return (
-            <Row key={key} zero={count === 0}>
-                <Label>
-                {count === 0 ? `no new ${key}s` : label(
-                    key === "messages" ? imessage : gmail,
-                    key === "messages" ? discord  : outlook
-                )}
-                </Label>
-            </Row>
-            );
-        })}
-        </Wrapper>
+      <Wrapper>
+        {data.map(({ key, label, count }) => (
+          <Row key={key} zero={count === 0}>
+            <Label>
+              {count === 0 ? `no new ${key}s` : label(count)}
+            </Label>
+          </Row>
+        ))}
+      </Wrapper>
     </>
-    );
+  );
 };
