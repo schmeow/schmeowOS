@@ -1,13 +1,13 @@
 import { React } from "uebersicht";
 import { styled } from "uebersicht";
 
-export const refreshFrequency = 1000;
+export const refreshFrequency = 10;
+
 export const command = `
   imsg=\$(sqlite3 ~/Library/Messages/chat.db \
     "SELECT COUNT(*) FROM message WHERE is_read=0 AND is_from_me=0;")
-
   gmail=\$(osascript << 'EOF'
-tell application "Mail"
+  tell application "Mail"
   set total to 0
   repeat with a in every account
     if name of a is "Google" then
@@ -19,11 +19,10 @@ tell application "Mail"
     end if
   end repeat
   return total
-end tell
-EOF)
-
+  end tell
+  EOF)
   outlook=\$(osascript << 'EOF'
-tell application "Mail"
+  tell application "Mail"
   repeat with a in every account
     if name of a is "Exchange" then
       repeat with mb in every mailbox of a
@@ -33,10 +32,10 @@ tell application "Mail"
       end repeat
     end if
   end repeat
-end tell
-EOF)
-
-  echo "\$imsg|\$gmail|\$outlook"
+  end tell
+  EOF)
+  lockstate=\$(cat ~/.lockstate 2>/dev/null || echo 'unlocked')
+  echo "\$imsg|\$gmail|\$outlook|\$lockstate"
 `;
 
 export const className = `
@@ -63,7 +62,6 @@ const Wrapper = styled("div")`
 const Row = styled("div")`
     justify-content: center;
     background: rgba(10, 18, 14, 0.5);
-    
     border-radius: 15px;
     padding: 3px 14px 7px 14px;
     backdrop-filter: blur(6px);
@@ -81,7 +79,10 @@ const Label = styled("span")`
 const p = (n, singular, plural) => n === 1 ? singular : plural;
 
 export const render = ({ output }) => {
-  const parts = (output || "").trim().split("|");
+  const lines = (output || "").trim().split("\n");
+  const parts = lines[0].split("|");
+  const isLocked = (parts[3] || "").trim().startsWith("locked");
+
   const imessageCount = parseInt(parts[0]) || 0;
   const gmailCount    = parseInt(parts[1]) || 0;
   const outlookCount  = parseInt(parts[2]) || 0;
@@ -93,7 +94,12 @@ export const render = ({ output }) => {
 
   return (
     <>
-      <Wrapper>
+      <Wrapper style={{
+        transition: "transform 0.4s ease, opacity 0.4s ease",
+        transform: isLocked ? "translateY(0)" : "translateY(30px)",
+        opacity: isLocked ? 1 : 0,
+        pointerEvents: isLocked ? "auto" : "none"
+      }}>
         {data.map(({ key, label, count }) => (
           <Row key={key} zero={count === 0}>
             <Label>
