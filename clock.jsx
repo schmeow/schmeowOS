@@ -1,7 +1,4 @@
-
-
-export const command = "date +'%A\n%B %-d\n%H:%M:%S'";
-
+export const command = "date +'%A\n%B %-d\n%H:%M:%S' && if [ -f ~/.lockstate ]; then echo 'LOCKED'; else echo 'UNLOCKED'; fi";
 export const refreshFrequency = 1000;
 
 export const className =`
@@ -11,9 +8,9 @@ export const className =`
     src: url('Doto-Medium.ttf') format('truetype'); 
   }
   
-  top: 20%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 15%;
+  left: 52%; 
+  transform: translateX(-50%);
   text-align: center;
   
   color: #f7f3e8;
@@ -49,7 +46,12 @@ export const className =`
   }
 `;
 
-export const render = ({output}) => {
+export const render = ({ output }) => {
+  const lines = output.split('\n');
+  const isLocked = lines[lines.length - 1].trim() === 'LOCKED';
+
+  // if (!isLocked) return <div style={{display: 'none'}} />;
+  
   const [day, dateString, time] = output.split('\n');
   const displayDay = day ? day.toUpperCase() : 'LOADING';
   const displayDate = dateString ? dateString.toUpperCase() : '';
