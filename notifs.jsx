@@ -6,34 +6,31 @@ export const refreshFrequency = 10;
 export const command = `
   imsg=\$(sqlite3 ~/Library/Messages/chat.db \
     "SELECT COUNT(*) FROM message WHERE is_read=0 AND is_from_me=0;")
-  gmail=\$(osascript << 'EOF'
-  tell application "Mail"
-  set total to 0
-  repeat with a in every account
-    if name of a is "Google" then
-      repeat with mb in every mailbox of a
-        if name of mb is "INBOX" then
-          set total to total + (unread count of mb)
-        end if
-      end repeat
-    end if
-  end repeat
-  return total
-  end tell
-  EOF)
-  outlook=\$(osascript << 'EOF'
-  tell application "Mail"
-  repeat with a in every account
-    if name of a is "Exchange" then
-      repeat with mb in every mailbox of a
-        if name of mb is "Inbox" then
-          return unread count of mb
-        end if
-      end repeat
-    end if
-  end repeat
-  end tell
-  EOF)
+  gmail=\$(osascript -e 'tell application "Mail"' \
+    -e 'set total to 0' \
+    -e 'repeat with a in every account' \
+    -e 'if name of a is "Google" then' \
+    -e 'repeat with mb in every mailbox of a' \
+    -e 'if name of mb is "INBOX" then' \
+    -e 'set total to total + (unread count of mb)' \
+    -e 'end if' \
+    -e 'end repeat' \
+    -e 'end if' \
+    -e 'end repeat' \
+    -e 'return total' \
+    -e 'end tell')
+  outlook=\$(osascript -e 'tell application "Mail"' \
+    -e 'repeat with a in every account' \
+    -e 'if name of a is "Exchange" then' \
+    -e 'repeat with mb in every mailbox of a' \
+    -e 'if name of mb is "Inbox" then' \
+    -e 'return unread count of mb' \
+    -e 'end if' \
+    -e 'end repeat' \
+    -e 'end if' \
+    -e 'end repeat' \
+    -e 'end tell')
+  echo "1" > $HOME/Documents/schmeowos/notifstate.txt
   lockstate=\$(cat ~/.lockstate 2>/dev/null || echo 'unlocked')
   echo "\$imsg|\$gmail|\$outlook|\$lockstate"
 `;
@@ -96,6 +93,7 @@ export const render = ({ output }) => {
     <>
       <Wrapper style={{
         transition: "transform 0.4s ease, opacity 0.4s ease",
+        transitionDelay: isLocked ? "0ms" : "0ms",
         transform: isLocked ? "translateY(0)" : "translateY(30px)",
         opacity: isLocked ? 1 : 0,
         pointerEvents: isLocked ? "auto" : "none"

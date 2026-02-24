@@ -1,20 +1,24 @@
 import { React } from "uebersicht";
 
-export const command = "date +'%A\n%B %-d\n%H:%M:%S' && if [ -f ~/.lockstate ]; then cat ~/.lockstate; else echo 'unlocked'; fi";
-export const refreshFrequency = 650;
+export const command = `date +'%A
+%B %-d
+%H:%M:%S' && if [ -f ~/.lockstate ]; then cat ~/.lockstate; else echo 'unlocked'; fi && echo '' && (cat $HOME/Documents/schmeowos/notifstate.txt 2>/dev/null || echo '0')`;
+export const refreshFrequency = 10;
 
 export const className =`
   @font-face {
     font-family: 'Doto'; 
     src: url('Doto-Medium.ttf') format('truetype'); 
   }
+
     top: 15%;
-    left: 52%; 
+    left: 53%; 
     transform: translateX(-50%);
     text-align: center;
-  color: #f7f3e8;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: #f7f3e8;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
   .time {
     font-family: 'Doto', sans-serif;
     font-size: 130px; 
@@ -32,6 +36,7 @@ export const className =`
     margin-bottom: 10px;
     opacity: 0.8;
     white-space: nowrap;
+    transform: translateX(-5%);
   }
   .seconds {
     font-size: 40px;
@@ -42,8 +47,10 @@ export const className =`
 `;
 
 export const render = ({ output }) => {
-  const lines = output.split('\n');
-  const isLocked = lines[lines.length - 1].trim().startsWith('locked');
+  const lines = output ? output.split('\n').filter(l => l.trim() !== '') : [];
+  const isLocked = (lines[lines.length - 2] || '').trim().startsWith('locked');
+  const notifReady = (lines[lines.length - 1] || '').trim() === '1';
+  const shouldShow = isLocked && notifReady;
   const [day, dateString, time] = lines;
   const displayDay = day ? day.toUpperCase() : 'LOADING';
   const displayDate = dateString ? dateString.toUpperCase() : '';
@@ -51,14 +58,15 @@ export const render = ({ output }) => {
   const displayTime = hhmm.join(':');
 
   return (
-    <div id="lockclock-root" style={{
-      transition: "transform 0.4s ease, opacity 0.4s ease",
-      transform: isLocked ? "translateY(0)" : "translateY(30px)",
-      opacity: isLocked ? 1 : 0,
-      pointerEvents: isLocked ? "auto" : "none"
-    }}>
-      <div className="time">{displayTime}<span className="seconds">{ss}</span></div>
-      <div className="date">{displayDay}, {displayDate}</div>
-    </div>
-  );
+  <div id="lockclock-root" style={{
+    transition: "transform 0.4s ease, opacity 0.4s ease",
+    transitionDelay: isLocked ? "0ms" : "400ms",
+    transform: shouldShow ? "translateY(0)" : "translateY(30px)",
+    opacity: shouldShow ? 1 : 0,
+    pointerEvents: shouldShow ? "auto" : "none"
+  }}>
+    <div className="time">{displayTime}<span className="seconds">{ss}</span></div>
+    <div className="date">{displayDay}, {displayDate}</div>
+  </div>
+);
 }

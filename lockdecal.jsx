@@ -4,8 +4,8 @@ export const command = `if [ -f ~/.lockstate ]; then cat ~/.lockstate; else echo
 export const refreshFrequency = 10;
 
 export const className = `
-  top: 20px;
-  left: 350px;
+  top: 200px;
+  left: 320px;
   z-index: -1;
 `;
 
@@ -18,15 +18,16 @@ export const render = ({ output }) => {
 
   return (
     <img
-      src="gemflower.png"
+      src="flower.png"
       style={{
-        width: "650px",
-        transform: isLocked ? "rotate(45deg) translateY(-30px)" : "rotate(45deg) translateY(0)",
-        opacity: isLocked ? 0 : 1,
-        pointerEvents: isLocked ? "none" : "auto",
-        filter: "saturate(40%) brightness(40%) blur(0.7px) hue-rotate(170deg) opacity(60%)",
+        width: "300px",
+        height: "300px",
+        pointerEvents: "none",
+        transform: shouldShow ? "rotate(-45deg)" : "rotate(-75deg)",
+        opacity: shouldShow ? 1 : 0,
+        filter: "saturate(40%) brightness(60%) blur(0.5px) hue-rotate(120deg)",
         transition: "transform 0.4s ease, opacity 0.4s ease",
-        transitionDelay: isLocked ? "0ms" : "200ms",
+        transitionDelay: isLocked ? "0ms" : "300ms",
       }}
     />
   );
