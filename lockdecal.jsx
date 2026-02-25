@@ -27,7 +27,7 @@ export const render = ({ output }) => {
         opacity: shouldShow ? 1 : 0,
         filter: "saturate(40%) brightness(60%) blur(0.5px) hue-rotate(120deg)",
         transition: "transform 0.4s ease, opacity 0.4s ease",
-        transitionDelay: isLocked ? "0ms" : "300ms",
+        transitionDelay: isLocked ? "500ms" : "0ms",
       }}
     />
   );

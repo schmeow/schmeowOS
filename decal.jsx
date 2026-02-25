@@ -5,8 +5,8 @@ export const refreshFrequency = 10;
 
 export const className = `
   top: 20px;
-  left: 350px;
-  z-index: -1;
+  left: 250px;
+  z-index: -10;
 `;
 
 export const render = ({ output }) => {
@@ -18,15 +18,15 @@ export const render = ({ output }) => {
 
   return (
     <img
-      src="gemflower.png"
+      src="flower2.png"
       style={{
-        width: "650px",
+        width: "900px",
         transform: isLocked ? "rotate(45deg) translateY(-30px)" : "rotate(45deg) translateY(0)",
         opacity: isLocked ? 0 : 1,
         pointerEvents: isLocked ? "none" : "auto",
-        filter: "saturate(40%) brightness(40%) blur(0.7px) hue-rotate(170deg) opacity(60%)",
+        filter: "saturate(70%) brightness(40%) blur(0.7px) hue-rotate(10deg) opacity(60%)",
         transition: "transform 0.4s ease, opacity 0.4s ease",
-        transitionDelay: isLocked ? "0ms" : "200ms",
+        transitionDelay: isLocked ? "0ms" : "700ms",
       }}
     />
   );

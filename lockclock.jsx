@@ -60,11 +60,11 @@ export const render = ({ output }) => {
   return (
   <div id="lockclock-root" style={{
     transition: "transform 0.4s ease, opacity 0.4s ease",
-    transitionDelay: isLocked ? "0ms" : "400ms",
+    transitionDelay: isLocked ? "600ms" : "0ms",
     transform: shouldShow ? "translateY(0)" : "translateY(30px)",
     opacity: shouldShow ? 1 : 0,
     pointerEvents: shouldShow ? "auto" : "none"
-  }}>
+    }}>
     <div className="time">{displayTime}<span className="seconds">{ss}</span></div>
     <div className="date">{displayDay}, {displayDate}</div>
   </div>

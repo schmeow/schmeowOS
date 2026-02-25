@@ -62,7 +62,7 @@ export const render = ({ output }) => {
   return (
     <div style={{
       transition: "transform 0.4s ease, opacity 0.4s ease",
-      transitionDelay: isLocked ? "0ms" : "200ms",
+      transitionDelay: isLocked ? "0ms" : "4l00ms",
       transform: isLocked ? "translateY(-30px)" : "translateY(0)",
       opacity: isLocked ? 0 : 1,
       pointerEvents: isLocked ? "none" : "auto",

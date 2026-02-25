@@ -93,7 +93,7 @@ export const render = ({ output }) => {
     <>
       <Wrapper style={{
         transition: "transform 0.4s ease, opacity 0.4s ease",
-        transitionDelay: isLocked ? "0ms" : "0ms",
+        transitionDelay: isLocked ? "400ms" : "0ms",
         transform: isLocked ? "translateY(0)" : "translateY(30px)",
         opacity: isLocked ? 1 : 0,
         pointerEvents: isLocked ? "auto" : "none"
